@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Dayflow
+Comment=Private local timeline and weekly review workspace
+Exec=dayflow %U
+Icon=dayflow
+Terminal=false
+Type=Application
+Categories=Utility;Productivity;
+StartupNotify=true

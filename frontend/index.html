@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff8f0" />
+    <meta
+      name="description"
+      content="Dayflow for Linux. A quiet local timeline and weekly review workspace."
+    />
+    <title>Dayflow for Linux</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <div class="brand-lockup" aria-label="Dayflow for Linux">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <div class="brand-name">dayflow</div>
+            <div class="brand-platform">for linux</div>
+          </div>
+        </div>
+
+        <nav class="primary-nav">
+          <button class="nav-item is-active" data-view-target="timeline" type="button">
+            <span class="nav-icon icon-timeline" aria-hidden="true"></span>
+            <span>Timeline</span>
+          </button>
+          <button class="nav-item" data-view-target="weekly" type="button">
+            <span class="nav-icon icon-weekly" aria-hidden="true"></span>
+            <span>Weekly review</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="local-status">
+            <span class="status-dot"></span>
+            <span>Local only</span>
+          </div>
+          <div class="sidebar-caption">Your activity stays on this device.</div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="page-eyebrow">PERSONAL ACTIVITY</p>
+            <h1 id="page-title">Timeline</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="quiet-button ai-source-button" id="ai-settings" type="button">
+              <span class="ai-source-dot" aria-hidden="true"></span>
+              <span>AI source</span>
+              <span class="ai-source-label" id="ai-source-label">Ollama</span>
+            </button>
+            <button class="quiet-button" id="jump-today" type="button">
+              <span class="button-sun" aria-hidden="true">✦</span>
+              Today
+            </button>
+            <button class="record-button" id="record-toggle" type="button">
+              <span class="record-glyph" aria-hidden="true"></span>
+              <span id="record-label">Record screen</span>
+              <span class="record-duration" id="record-duration"></span>
+            </button>
+          </div>
+        </header>
+
+        <section class="view-panel is-visible" id="timeline-view" data-view="timeline">
+          <div class="view-toolbar">
+            <div class="date-navigation">
+              <button class="round-button" id="timeline-previous" type="button" aria-label="Previous day">
+                <span aria-hidden="true">←</span>
+              </button>
+              <button class="date-pill" id="timeline-date" type="button">Today, Sep 30</button>
+              <button class="round-button" id="timeline-next" type="button" aria-label="Next day">
+                <span aria-hidden="true">→</span>
+              </button>
+              <input class="visually-hidden" id="timeline-date-input" type="date" aria-label="Select date" />
+            </div>
+
+            <div class="mode-switch" role="group" aria-label="Timeline mode">
+              <button class="mode-button is-active" data-timeline-mode="day" type="button">Day</button>
+              <button class="mode-button" data-timeline-mode="week" type="button">Week</button>
+            </div>
+          </div>
+
+          <div class="timeline-summary-row" id="timeline-summary"></div>
+
+          <div class="timeline-layout">
+            <div class="timeline-card surface-card">
+              <div class="timeline-card-header">
+                <div>
+                  <p class="section-kicker">ACTIVITY MAP</p>
+                  <h2 id="timeline-heading">A clear view of your day</h2>
+                </div>
+                <div class="timeline-card-actions">
+                  <button class="capture-state" id="capture-state" type="button">Ready for screen capture</button>
+                  <button class="add-button" id="add-activity" type="button">
+                    <span aria-hidden="true">＋</span> Add activity
+                  </button>
+                </div>
+              </div>
+              <div class="timeline-scroll" id="timeline-scroll">
+                <div id="timeline-content"></div>
+              </div>
+            </div>
+
+            <aside class="activity-detail surface-card" id="activity-detail" aria-live="polite">
+              <div class="detail-empty">
+                <div class="detail-empty-orb" aria-hidden="true">✦</div>
+                <h2>Choose a moment</h2>
+                <p>Select an activity to see its notes and time range.</p>
+              </div>
+            </aside>
+          </div>
+          <p class="capture-footnote" id="capture-footnote">Screen capture is off. Use Record screen to build AI-generated cards from your screen.</p>
+        </section>
+
+        <section class="view-panel" id="weekly-view" data-view="weekly" hidden>
+          <div class="weekly-toolbar">
+            <div class="week-navigation">
+              <button class="round-button" id="week-previous" type="button" aria-label="Previous week">←</button>
+              <button class="week-title-button" id="week-title" type="button">Sep 28 – Oct 4, 2026</button>
+              <button class="round-button" id="week-next" type="button" aria-label="Next week">→</button>
+            </div>
+            <button class="quiet-button" id="week-current" type="button">This week</button>
+          </div>
+
+          <div class="review-intro surface-card">
+            <div>
+              <p class="section-kicker">WEEK IN REVIEW</p>
+              <h2 id="review-title">A week worth of momentum.</h2>
+              <p class="review-subtitle" id="review-subtitle">
+                Your activity becomes a calmer, more useful picture when you take a step back.
+              </p>
+            </div>
+            <div class="review-stat-highlight">
+              <span class="stat-label">FOCUS TIME</span>
+              <strong id="review-focus-time">0h</strong>
+              <span id="review-focus-caption">Start recording to build your week.</span>
+            </div>
+          </div>
+
+          <div class="weekly-grid">
+            <article class="weekly-card surface-card weekly-distribution">
+              <div class="card-heading-row">
+                <div>
+                  <p class="section-kicker">TIME DISTRIBUTION</p>
+                  <h2>How the week moved</h2>
+                </div>
+                <span class="tiny-chip">All activity</span>
+              </div>
+              <div class="distribution-chart" id="distribution-chart"></div>
+              <div class="chart-legend" id="chart-legend"></div>
+            </article>
+
+            <article class="weekly-card surface-card context-card">
+              <div class="card-heading-row">
+                <div>
+                  <p class="section-kicker">WEEKLY PULSE</p>
+                  <h2>Context and rhythm</h2>
+                </div>
+                <span class="pulse-icon" aria-hidden="true">⌁</span>
+              </div>
+              <div class="pulse-graph" aria-label="Weekly activity pulse">
+                <svg viewBox="0 0 620 170" preserveAspectRatio="none" role="img">
+                  <defs>
+                    <linearGradient id="pulse-gradient" x1="0" x2="1">
+                      <stop offset="0" stop-color="#9bc5ff" />
+                      <stop offset="0.52" stop-color="#ffb57b" />
+                      <stop offset="1" stop-color="#ff8662" />
+                    </linearGradient>
+                    <linearGradient id="pulse-fill" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0" stop-color="#ffb57b" stop-opacity="0.24" />
+                      <stop offset="1" stop-color="#ffb57b" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path id="pulse-area" fill="url(#pulse-fill)" d="M 0 145 L 0 120" />
+                  <path id="pulse-line" fill="none" stroke="url(#pulse-gradient)" stroke-width="3" stroke-linecap="round" />
+                  <g id="pulse-nodes"></g>
+                </svg>
+                <div class="pulse-axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+              </div>
+              <div class="pulse-stats" id="pulse-stats"></div>
+            </article>
+
+            <article class="weekly-card surface-card category-card">
+              <div class="card-heading-row">
+                <div>
+                  <p class="section-kicker">FOCUS BREAKDOWN</p>
+                  <h2>Where your attention went</h2>
+                </div>
+              </div>
+              <div class="category-list" id="category-list"></div>
+            </article>
+
+            <article class="weekly-card surface-card notes-card">
+              <div class="card-heading-row">
+                <div>
+                  <p class="section-kicker">YOUR NOTES</p>
+                  <h2>Keep the useful part</h2>
+                </div>
+                <span class="save-note-state" id="save-note-state">Saved locally</span>
+              </div>
+              <textarea id="weekly-notes" placeholder="What felt meaningful this week? What would you like to carry forward?"></textarea>
+              <div class="notes-footer">
+                <span>Only you can see these notes.</span>
+                <span class="notes-key">⌘ / Ctrl + Enter to save</span>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="activity-dialog" id="activity-dialog">
+      <form method="dialog" id="activity-form">
+        <div class="dialog-header">
+          <div>
+            <p class="section-kicker">NEW TIMELINE CARD</p>
+            <h2>Record a moment</h2>
+          </div>
+          <button class="dialog-close" value="cancel" aria-label="Close">×</button>
+        </div>
+        <div class="form-grid">
+          <label>
+            Date
+            <input id="activity-date" name="date" type="date" required />
+          </label>
+          <label>
+            Category
+            <select id="activity-category" name="category">
+              <option value="Focus">Focus</option>
+              <option value="Communication">Communication</option>
+              <option value="Planning">Planning</option>
+              <option value="Break">Break</option>
+              <option value="Learning">Learning</option>
+            </select>
+          </label>
+          <label>
+            Start
+            <input id="activity-start" name="start" type="time" required />
+          </label>
+          <label>
+            End
+            <input id="activity-end" name="end" type="time" required />
+          </label>
+          <label class="form-span">
+            Title
+            <input id="activity-title" name="title" type="text" placeholder="What were you working on?" required maxlength="90" />
+          </label>
+          <label class="form-span">
+            Notes
+            <textarea id="activity-summary" name="summary" rows="3" placeholder="A short note about this activity (optional)"></textarea>
+          </label>
+        </div>
+        <p class="form-error" id="form-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="secondary-button" value="cancel" type="submit">Cancel</button>
+          <button class="primary-button" id="save-activity" value="default" type="submit">Save activity</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="activity-dialog ai-dialog" id="ai-dialog">
+      <form method="dialog" id="ai-form">
+        <div class="dialog-header">
+          <div>
+            <p class="section-kicker">CORE ANALYSIS</p>
+            <h2>Connect a vision model</h2>
+          </div>
+          <button class="dialog-close" value="cancel" aria-label="Close">×</button>
+        </div>
+        <p class="ai-dialog-copy">Dayflow sends a small batch of screen snapshots to this provider to identify what you worked on and estimate the exact time range. Ollama keeps images on this machine.</p>
+        <div class="form-grid">
+          <label class="form-span">
+            Provider
+            <select id="ai-provider" name="provider">
+              <option value="ollama">Local Ollama</option>
+              <option value="openai">OpenAI-compatible endpoint</option>
+            </select>
+          </label>
+          <label class="form-span">
+            Endpoint
+            <input id="ai-endpoint" name="endpoint" type="url" placeholder="http://127.0.0.1:11434" required />
+          </label>
+          <label>
+            Vision model
+            <input id="ai-model" name="model" type="text" placeholder="qwen2.5vl:7b" required />
+          </label>
+          <label>
+            Capture every
+            <select id="capture-interval" name="interval">
+              <option value="30">30 seconds</option>
+              <option value="60">1 minute</option>
+              <option value="120">2 minutes</option>
+              <option value="300">5 minutes</option>
+            </select>
+          </label>
+          <label>
+            Analyze batch every
+            <select id="analysis-interval" name="analysisInterval">
+              <option value="15">15 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="60">1 hour</option>
+            </select>
+          </label>
+          <label class="form-span" id="ai-api-key-row">
+            API key (optional for local servers)
+            <input id="ai-api-key" name="apiKey" type="password" placeholder="Stored only in the local app data file" autocomplete="off" />
+          </label>
+        </div>
+        <div class="ai-test-row">
+          <button class="secondary-button" id="test-ai-connection" type="button">Test connection</button>
+          <span id="ai-test-status" role="status">Uses a 1-pixel test image. Your settings are not saved.</span>
+        </div>
+        <p class="form-error" id="ai-form-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button class="secondary-button" value="cancel" type="submit">Cancel</button>
+          <button class="primary-button" id="save-ai-settings" value="default" type="submit">Save AI source</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="activity-dialog error-dialog" id="error-dialog">
+      <form method="dialog">
+        <div class="dialog-header">
+          <div>
+            <p class="section-kicker">CAPTURE DIAGNOSTIC</p>
+            <h2>Something needs attention</h2>
+          </div>
+          <button class="dialog-close" value="cancel" aria-label="Close">×</button>
+        </div>
+        <pre class="error-detail" id="error-detail"></pre>
+        <div class="dialog-actions">
+          <button class="secondary-button" id="copy-error" type="button">Copy details</button>
+          <button class="primary-button" value="cancel" type="submit">Close</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>

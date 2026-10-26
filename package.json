@@ -1,0 +1,18 @@
+{
+  "name": "dayflow-linux",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A lightweight local timeline and weekly review app for Linux.",
+  "scripts": {
+    "start": "python3 -m http.server 4173 --directory frontend",
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build --bundles deb",
+    "build:rpm": "tauri build --bundles rpm",
+    "build:appimage": "tauri build --bundles appimage",
+    "build:pacman": "cargo build --manifest-path src-tauri/Cargo.toml --release && make -C packaging/arch package"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}

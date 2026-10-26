@@ -1,0 +1,29 @@
+pkgname=dayflow
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Private local timeline and weekly review workspace'
+arch=('x86_64')
+url='https://github.com/dayflow/dayflow'
+license=('custom')
+depends=('gtk3' 'webkit2gtk-4.1')
+optdepends=('grim: Wayland screen capture support')
+source=()
+sha256sums=()
+
+build() {
+    local root="${startdir}/../.."
+    [[ -x "${root}/src-tauri/target/release/dayflow-linux" ]] || {
+        error 'Release binary is missing. Run cargo build --manifest-path src-tauri/Cargo.toml --release first.'
+        return 1
+    }
+}
+
+package() {
+    local root="${startdir}/../.."
+    install -Dm755 "${root}/src-tauri/target/release/dayflow-linux" \
+        "${pkgdir}/usr/bin/dayflow"
+    install -Dm644 "${startdir}/dayflow.desktop" \
+        "${pkgdir}/usr/share/applications/dayflow.desktop"
+    install -Dm644 "${root}/src-tauri/icons/icon.png" \
+        "${pkgdir}/usr/share/icons/hicolor/512x512/apps/dayflow.png"
+}
